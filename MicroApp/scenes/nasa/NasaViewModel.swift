@@ -14,7 +14,7 @@ import SwiftUI
 @MainActor
 public final class NasaViewModel: ObservableObject {
     //@Injected private var apodService: ApodServiceProtocol
-    @Injected private var asteroidService: AsteriodServiceProtocol
+    @Injected private var asteroidService: AsteriodService
     //@Injected private var marsPhotoService: MarsPhotoServiceProtocol
 
     @Published var isLoading: Bool = true

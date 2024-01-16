@@ -11,9 +11,9 @@ import Resolver
 
 extension Resolver: ResolverRegistering {
     func registerServices() {
-        register(AsteriodServiceProtocol.self) { AsteriodService() }
-        register(ApodServiceProtocol.self) { ApodService() }
-        register(QuizServiceProtocol.self) { QuizService() }
+        register(AsteriodService.self) { AsteriodServiceImpl() }
+        register(ApodService.self) { ApodServiceImpl() }
+        register(QuizService.self) { QuizServiceImpl() }
     }
 
     func registerUsecases() {

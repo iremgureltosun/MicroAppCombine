@@ -50,7 +50,7 @@ struct QuestionView: View {
                 do {
                     try viewModel.getQuestion()
                 } catch {}
-                cancellableAnswers = viewModel.scoreUseCase.answersSubject
+                cancellableAnswers = viewModel.scoreManager.answersSubject
                     .collect()
                     .sink { list in
                         for output in list {
@@ -95,7 +95,7 @@ struct QuestionView: View {
         viewModel.goToNextQuestion()
         guard let count = viewModel.response?.results?.count, count > 0 else {
             viewModel.navigateToResults = true
-            viewModel.scoreUseCase.answersSubject.send(completion: .finished)
+            viewModel.scoreManager.answersSubject.send(completion: .finished)
 
             return
         }

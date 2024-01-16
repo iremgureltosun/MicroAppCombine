@@ -14,8 +14,8 @@ import SwiftUI
 
 
 final class QuestionViewModel: ObservableObject {
-    @Injected var serviceProvider: QuizServiceProtocol
-    @Injected var scoreUseCase: ScoreManager
+    @Injected var quizService: QuizService
+    @Injected var scoreManager: ScoreManager
     @EnvironmentObject private var appManager: ApplicationManager
     @Published var response: QuizResponse?
     var searchCancellable: AnyCancellable?
@@ -30,7 +30,7 @@ final class QuestionViewModel: ObservableObject {
         guard let urlRequest = try QuizResponse.getRequestUrl(amount: totalQuestion, category: AppStorage.selectedCategory, difficulty: AppStorage.selectedLevel, type: QuestionType.multiple) else {
             return
         }
-        searchCancellable = try serviceProvider.performRequest(urlRequest: urlRequest)
+        searchCancellable = try quizService.performRequest(urlRequest: urlRequest)
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
@@ -51,15 +51,15 @@ final class QuestionViewModel: ObservableObject {
 
     func calculateScore(result: Result?, answer: String?) {
         guard let result = result, let answer = answer else {
-            scoreUseCase.updateScore(pair: (0, 1))
+            scoreManager.updateScore(pair: (0, 1))
             return
         }
         if result.isTrue(answer: answer) {
-            scoreUseCase.updateScore(pair: (1, 1))
-            scoreUseCase.answersSubject.send((answer, true))
+            scoreManager.updateScore(pair: (1, 1))
+            scoreManager.answersSubject.send((answer, true))
         } else {
-            scoreUseCase.updateScore(pair: (0, 1))
-            scoreUseCase.answersSubject.send((answer, false))
+            scoreManager.updateScore(pair: (0, 1))
+            scoreManager.answersSubject.send((answer, false))
         }
     }
 }
