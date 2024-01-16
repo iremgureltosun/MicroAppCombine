@@ -23,10 +23,14 @@ struct ScoreCollectorView: View {
                 .scaleEffect(1)
         }
         .onAppear {
-            self.cancellable = viewModel.scoreUseCase.quizSubject
-                .sink { val in
-                    totalSuccess += val.0
-                    totalAnswer += val.1
+            self.cancellable = viewModel.scoreManager.overviewSubject
+                .receive(on: DispatchQueue.main)
+                .retry(2)
+                .sink { challenge, answer in
+
+                    totalSuccess += challenge.isTrue(answer) ? 1 : 0
+
+                    totalAnswer += 1
                 }
         }
     }

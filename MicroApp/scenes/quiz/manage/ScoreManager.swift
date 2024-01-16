@@ -7,23 +7,19 @@
 
 import Combine
 import Foundation
+import Quiz
 
 protocol ScoreManager {
-    var quizSubject: PassthroughSubject<(Int, Int), Never> { get }
-    var answersSubject: PassthroughSubject<(String, Bool), Never> { get }
-    func updateScore(pair: (Int, Int))
-    func onAnsweredResult(answer: String, result: Bool)
+    var overviewSubject: PassthroughSubject<(ChallengeEntry, String), Never> { get }
+    
+    func onAnswered(result: ChallengeEntry, answer: String?) throws
 }
 
 final class ScoreManagerImpl: ScoreManager {
-    var quizSubject = PassthroughSubject<(Int, Int), Never>()
-    var answersSubject = PassthroughSubject<(String, Bool), Never>()
+    var overviewSubject = PassthroughSubject<(ChallengeEntry, String), Never>()
 
-    func updateScore(pair: (Int, Int)) {
-        quizSubject.send(pair)
-    }
-
-    func onAnsweredResult(answer: String, result: Bool) {
-        answersSubject.send((answer, result))
+    func onAnswered(result: ChallengeEntry, answer: String?) throws {
+        guard let answer = answer else { throw QuizError.skippedQuestion }
+        overviewSubject.send((result, answer))
     }
 }

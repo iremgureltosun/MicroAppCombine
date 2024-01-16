@@ -9,5 +9,5 @@ import Foundation
 import Resolver
 
 final class ScoreCollectorViewModel: ObservableObject {
-    @Injected var scoreUseCase: ScoreManager
+    @Injected var scoreManager: ScoreManager
 }

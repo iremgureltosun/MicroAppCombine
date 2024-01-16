@@ -23,6 +23,7 @@
 		4D5A85DC2B021E2700D85BC5 /* MicroAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5A85DB2B021E2700D85BC5 /* MicroAppUITestsLaunchTests.swift */; };
 		4D5A85F02B021E9200D85BC5 /* Nasa in Frameworks */ = {isa = PBXBuildFile; productRef = 4D5A85EF2B021E9200D85BC5 /* Nasa */; };
 		4D5A85F32B021EBA00D85BC5 /* Quiz in Frameworks */ = {isa = PBXBuildFile; productRef = 4D5A85F22B021EBA00D85BC5 /* Quiz */; };
+		4D6C1B562B5670CB00006E7C /* QuizManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D6C1B552B5670CB00006E7C /* QuizManager.swift */; };
 		4D862A942B02204700D407E9 /* ApplicationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D862A932B02204700D407E9 /* ApplicationManager.swift */; };
 		4D862A962B02205A00D407E9 /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D862A952B02205A00D407E9 /* ActivityIndicator.swift */; };
 		4D862A982B02206000D407E9 /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D862A972B02206000D407E9 /* RoundedButton.swift */; };
@@ -71,6 +72,7 @@
 		4D5A85D52B021E2700D85BC5 /* MicroAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MicroAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D5A85D92B021E2700D85BC5 /* MicroAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicroAppUITests.swift; sourceTree = "<group>"; };
 		4D5A85DB2B021E2700D85BC5 /* MicroAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicroAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4D6C1B552B5670CB00006E7C /* QuizManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizManager.swift; sourceTree = "<group>"; };
 		4D862A932B02204700D407E9 /* ApplicationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationManager.swift; sourceTree = "<group>"; };
 		4D862A952B02205A00D407E9 /* ActivityIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		4D862A972B02206000D407E9 /* RoundedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedButton.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				4D862AA22B0220AC00D407E9 /* ScoreManager.swift */,
+				4D6C1B552B5670CB00006E7C /* QuizManager.swift */,
 			);
 			path = manage;
 			sourceTree = "<group>";
@@ -415,6 +418,7 @@
 				4D862AA32B0220AC00D407E9 /* ScoreManager.swift in Sources */,
 				4D862AA82B0220F600D407E9 /* QuestionView.swift in Sources */,
 				4D862AAF2B02215F00D407E9 /* ResultsViewModel.swift in Sources */,
+				4D6C1B562B5670CB00006E7C /* QuizManager.swift in Sources */,
 				4D862A982B02206000D407E9 /* RoundedButton.swift in Sources */,
 				4D4237CE2B0348F7008EADD4 /* NasaView.swift in Sources */,
 				4D862A942B02204700D407E9 /* ApplicationManager.swift in Sources */,

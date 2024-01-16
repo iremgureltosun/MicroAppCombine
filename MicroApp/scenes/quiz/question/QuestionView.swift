@@ -14,7 +14,6 @@ import UIKit
 struct QuestionView: View {
     @EnvironmentObject private var appManager: ApplicationManager
     @StateObject private var viewModel: QuestionViewModel
-    @State var cancellableAnswers: AnyCancellable?
 
     init() {
         _viewModel = StateObject(wrappedValue: QuestionViewModel())
@@ -23,20 +22,21 @@ struct QuestionView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: Constants.Spaces.smallSpace) {
-                if let result = viewModel.response?.results?.first {
-                    Text(result.correctedQuestion)
+                if let presentedChallenge = viewModel.presentedChallenge{
+                    Text(presentedChallenge.correctedQuestion)
                         .font(.title2)
 
-                    selectionsView(result: result)
+                    selectionsView(result: presentedChallenge)
                         .padding(.top, Constants.Spaces.mediumSpace)
 
                     Spacer()
 
+                    RoundedButton(title: "Skip") {
+                        try? viewModel.scoreManager.onAnswered(result: presentedChallenge, answer: nil)
+                        viewModel.goToNextQuestion()
+                    }
                 } else {
                     ActivityIndicator(isAnimating: true)
-                }
-                RoundedButton(title: "Skip") {
-                    next(nil, nil)
                 }
             }
             .onChange(of: viewModel.navigateToResults) { _, newValue in
@@ -47,27 +47,45 @@ struct QuestionView: View {
             .padding(.top, Constants.Spaces.largeSpace)
             .padding(.horizontal, Constants.Spaces.mediumSpace)
             .onAppear {
-                do {
-                    try viewModel.getQuestion()
-                } catch {}
-                cancellableAnswers = viewModel.scoreManager.answersSubject
-                    .collect()
-                    .sink { list in
-                        for output in list {
-                            viewModel.answers[output.0] = output.1
+                Task{
+                    try viewModel.quizManager.getAllQuestions()
+                    .receive(on: DispatchQueue.main)
+                    .sink { completion in
+                        switch completion {
+                        case .finished:
+                            print("Fetched question")
+                        case let .failure(error):
+                            print("Received error on fetch \(error)")
                         }
+                    } receiveValue: { response in
+                        self.viewModel.presentedChallenge = response.results?.first
+                        print("PresentedChallenge: \(self.viewModel.presentedChallenge)")
                     }
-            }
-        }.navigationBarTitle(AppStorage.selectedCategory.title)
-            .toolbar(content: {
-                ToolbarItem(placement: .topBarTrailing) {
-                    ScoreCollectorView()
+                    .store(in: &viewModel.cancellables)
                 }
-            })
+            }
+            .task {
+                viewModel.scoreManager.overviewSubject
+                    .collect(viewModel.quizManager.totalQuestion)
+                    .sink { item in
+                        print("collected item: \(item)")
+                    }
+                    .store(in: &viewModel.cancellables)
+            }
+            .onChange(of: viewModel.observedQuestion) {
+                _ = viewModel.quizManager.response.publisher.dropFirst(viewModel.observedQuestion)
+            }
+        }
+        .navigationBarTitle(AppStorage.selectedCategory.title)
+        .toolbar(content: {
+            ToolbarItem(placement: .topBarTrailing) {
+                ScoreCollectorView()
+            }
+        })
     }
 
     @ViewBuilder
-    func getSelection(result: Result, answer: String) -> some View {
+    func getSelection(result: ChallengeEntry, answer: String) -> some View {
         RoundedRectangle(cornerRadius: Constants.cornerRadius)
             .fill(Color.blue.opacity(0.5))
             .shadow(
@@ -85,24 +103,14 @@ struct QuestionView: View {
             }
             .onTapGesture {
                 withAnimation {
-                    next(result, answer)
+                    try? viewModel.scoreManager.onAnswered(result: result, answer: answer)
+                    viewModel.goToNextQuestion()
                 }
             }
     }
 
-    private func next(_ result: Result?, _ answer: String?) {
-        viewModel.calculateScore(result: result, answer: answer)
-        viewModel.goToNextQuestion()
-        guard let count = viewModel.response?.results?.count, count > 0 else {
-            viewModel.navigateToResults = true
-            viewModel.scoreManager.answersSubject.send(completion: .finished)
-
-            return
-        }
-    }
-
     @ViewBuilder
-    private func selectionsView(result: Result) -> some View {
+    private func selectionsView(result: ChallengeEntry) -> some View {
         ForEach(result.selections, id: \.self) { answer in
             getSelection(result: result, answer: answer)
         }
