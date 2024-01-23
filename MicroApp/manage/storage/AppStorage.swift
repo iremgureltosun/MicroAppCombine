@@ -1,11 +1,16 @@
 //
-//  UserDefault.swift
+//  AppStorage.swift
 //  QuizApp
 //
 //  Created by Tosun, Irem on 25.10.2023.
 //
 
 import Foundation
+
+enum AppStorage {
+    @UserDefault("quizStories", defaultValue: [])
+    static var quizStories: [QuizStory]
+}
 
 @propertyWrapper
 struct UserDefault<T: Codable> {

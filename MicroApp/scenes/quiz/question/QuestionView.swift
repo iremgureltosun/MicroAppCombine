@@ -13,6 +13,7 @@ import UIKit
 
 struct QuestionView: View {
     @EnvironmentObject private var appManager: ApplicationManager
+    @EnvironmentObject private var quizManager: QuizManager
     @StateObject private var viewModel: QuestionViewModel
 
     init() {
@@ -22,7 +23,7 @@ struct QuestionView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: Constants.Spaces.smallSpace) {
-                if let presentedChallenge = viewModel.presentedChallenge{
+                if let presentedChallenge = viewModel.presentedChallenge {
                     Text(presentedChallenge.correctedQuestion)
                         .font(.title2)
 
@@ -32,7 +33,7 @@ struct QuestionView: View {
                     Spacer()
 
                     RoundedButton(title: "Skip") {
-                        try? viewModel.scoreManager.onAnswered(result: presentedChallenge, answer: nil)
+                        try? ScoreManager.shared.onAnswered(result: ChallengeModel(challengeEntry: presentedChallenge, answer: nil))
                         viewModel.goToNextQuestion()
                     }
                 } else {
@@ -46,37 +47,49 @@ struct QuestionView: View {
             }
             .padding(.top, Constants.Spaces.largeSpace)
             .padding(.horizontal, Constants.Spaces.mediumSpace)
-            .onAppear {
+            .onAppear{
                 Task{
-                    try viewModel.quizManager.getAllQuestions()
-                    .receive(on: DispatchQueue.main)
-                    .sink { completion in
-                        switch completion {
-                        case .finished:
-                            print("Fetched question")
-                        case let .failure(error):
-                            print("Received error on fetch \(error)")
-                        }
+                    try QuizManager.shared.getAllQuestions().sink { _ in
+                        print("error")
                     } receiveValue: { response in
-                        self.viewModel.presentedChallenge = response.results?.first
-                        print("PresentedChallenge: \(self.viewModel.presentedChallenge)")
+                        viewModel.questions = response.results ?? []
+                        viewModel.presentedChallenge = viewModel.questions.first
                     }
                     .store(in: &viewModel.cancellables)
                 }
             }
             .task {
-                viewModel.scoreManager.overviewSubject
-                    .collect(viewModel.quizManager.totalQuestion)
-                    .sink { item in
-                        print("collected item: \(item)")
+                Task{
+                    viewModel.$observedQuestion
+                                .receive(on: DispatchQueue.main)
+                                .sink { completion in
+                                    switch completion {
+                                    case .finished:
+                                        print("Fetched question")
+                                    case let .failure(error):
+                                        print("Received error on fetch \(error)")
+                                    }
+                                } receiveValue: { index in
+                                    self.viewModel.presentedChallenge = viewModel.getQuestion(at: index)
+                                }
+                                .store(in: &viewModel.cancellables)
+                }
+            }
+            .task {
+                ScoreManager.shared.overviewSubject
+                    .collect(QuizManager.shared.totalQuestion)
+                    .receive(on: DispatchQueue.main)
+                    .sink { quiz in
+                        print("Completed test!")
+                        let category = QuizManager.shared.selectedCategory
+                        let level = QuizManager.shared.selectedLevel
+                        AppStorage.quizStories.append(QuizStory(challengeDate: Date(), category: category, level: level, challengeList: quiz))
+                        appManager.routes.append(.result)
                     }
                     .store(in: &viewModel.cancellables)
             }
-            .onChange(of: viewModel.observedQuestion) {
-                _ = viewModel.quizManager.response.publisher.dropFirst(viewModel.observedQuestion)
-            }
+            
         }
-        .navigationBarTitle(AppStorage.selectedCategory.title)
         .toolbar(content: {
             ToolbarItem(placement: .topBarTrailing) {
                 ScoreCollectorView()
@@ -103,7 +116,7 @@ struct QuestionView: View {
             }
             .onTapGesture {
                 withAnimation {
-                    try? viewModel.scoreManager.onAnswered(result: result, answer: answer)
+                    try? ScoreManager.shared.onAnswered(result: ChallengeModel(challengeEntry: result, answer: answer))
                     viewModel.goToNextQuestion()
                 }
             }

@@ -7,17 +7,65 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A86FC799-FAC9-4FDE-853C-416BBE6B23AA"
+            uuid = "796D8F08-410D-447A-A1A4-8E0DE39FC989"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "MicroApp/scenes/quiz/question/QuestionView.swift"
+            filePath = "MicroApp/scenes/quiz/question/QuestionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "goToNextQuestion()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F1026423-A437-439D-8C5D-B7CCE3261A1B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MicroApp/scenes/quiz/manage/ScoreManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "onAnswered(result:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F1026423-A437-439D-8C5D-B7CCE3261A1B - 3fac029b79f3f5f9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MicroApp.ScoreManagerImpl.onAnswered(result: Quiz.ChallengeEntry, answer: Swift.Optional&lt;Swift.String&gt;) throws -&gt; ()"
+                  moduleName = "MicroApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/irem.tosun/Documents/1/MicroApp/MicroApp/scenes/quiz/manage/ScoreManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "24"
+                  endingLineNumber = "24"
+                  offsetFromSymbolStart = "244">
+               </Location>
+               <Location
+                  uuid = "F1026423-A437-439D-8C5D-B7CCE3261A1B - 3fac029b79f3f5f9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MicroApp.ScoreManagerImpl.onAnswered(result: Quiz.ChallengeEntry, answer: Swift.Optional&lt;Swift.String&gt;) throws -&gt; ()"
+                  moduleName = "MicroApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/irem.tosun/Documents/1/MicroApp/MicroApp/scenes/quiz/manage/ScoreManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "24"
+                  endingLineNumber = "24"
+                  offsetFromSymbolStart = "140">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

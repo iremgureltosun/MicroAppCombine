@@ -10,7 +10,8 @@ import SwiftUI
 @main
 struct MicroAppApp: App {
     @StateObject private var appManager = ApplicationManager.shared
-
+    @StateObject private var quizManager = QuizManager.shared
+    
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $appManager.routes) {
@@ -18,6 +19,7 @@ struct MicroAppApp: App {
                     TabView {
                         LaunchQuizView()
                             .environmentObject(appManager)
+                            .environmentObject(quizManager)
                             .tabItem {
                                 Label("Quiz", systemImage: "pencil")
                             }

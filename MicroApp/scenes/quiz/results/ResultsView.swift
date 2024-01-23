@@ -9,25 +9,74 @@ import Combine
 import SwiftUI
 
 struct ResultsView: View {
-    @StateObject private var viewModel: ResultsViewModel
-
-    init() {
-        _viewModel = StateObject(wrappedValue: ResultsViewModel())
-    }
+    @StateObject private var viewModel: ResultsViewModel = ResultsViewModel()
 
     var body: some View {
-        Color.gray.overlay {
-            VStack {
-                ForEach(viewModel.answers.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
-                    HStack {
-                        Text("\(key)")
-                        Image(systemName: value == false ? "multiply.circle" : "checkmark.circle")
+        VStack {
+            ScrollView {
+                ForEach(viewModel.sortedStories, id: \.id) { story in
+                    VStack {
+                        DisclosureGroup {
+                            getHeader(for: story)
+                                .padding()
+
+                            Divider()
+                            
+                            ForEach(story.challengeList, id: \.id) { entry in
+                                getChallengeView(for: entry)
+                                
+                                Divider()
+                            }
+                        } label: {
+                            HStack(alignment: .top) {
+                                Text(story.challengeDate.toString())
+                                Text("Score: \(story.totalScore)")
+                            }
+                        }
                     }
                 }
             }
-            .onAppear {}
-        }.ignoresSafeArea()
-            .navigationBarHidden(true)
+        }
+        .padding(.horizontal, Constants.Spaces.mediumSpace)
+        .navigationTitle("Quiz History")
+        .navigationBarHidden(false)
+    }
+
+    @ViewBuilder private func getHeader(for story: QuizStory) -> some View {
+        HStack {
+            Text("Category: \(story.category.title)")
+                .fontWeight(.bold)
+            Spacer()
+            Text("Category: \(story.level.rawValue)")
+                .fontWeight(.bold)
+        }
+    }
+
+    @ViewBuilder func getChallengeView(for entry: ChallengeModel) -> some View {
+        VStack {
+            Group {
+                Text(entry.challengeEntry.question)
+                    .fontWeight(.bold)
+
+                if let answer = entry.answer {
+                    Text("You answered: \(answer)")
+                        .foregroundColor(answer == entry.challengeEntry.correctAnswer ? .green : .red)
+                } else {
+                    Text("You skipped")
+                }
+            }
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            ForEach(entry.challengeEntry.allAnswers, id: \.self) { answer in
+                HStack {
+                    Image(systemName: answer == entry.challengeEntry.correctAnswer ? "checkmark.circle" : "multiply.circle")
+                    Text(answer)
+                    Spacer()
+                }
+                .padding(.leading, Constants.Spaces.mediumSpace)
+            }
+        }
     }
 }
 

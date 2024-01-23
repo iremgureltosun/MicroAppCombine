@@ -10,8 +10,9 @@ import SwiftUI
 
 struct LaunchQuizView: View {
     @EnvironmentObject private var appManager: ApplicationManager
-    @State var selectedLevel: DifficultyLevel = .easy
-    @State var selectedCategory: QuizCategory = .animals
+    @EnvironmentObject private var quizManager: QuizManager
+    @State var level: DifficultyLevel = .easy
+    @State var category: QuizCategory = .animals
 
     // Constants for labels and icons
     private static let levelLabelText = "Select a Difficulty Level"
@@ -27,7 +28,7 @@ struct LaunchQuizView: View {
                     icon: { Image(systemName: Self.levelIconName) }
                 )
 
-                Picker(Self.levelLabelText, selection: $selectedLevel) {
+                Picker(Self.levelLabelText, selection: $level) {
                     ForEach(DifficultyLevel.allCases, id: \.self) {
                         Text($0.rawValue)
                     }
@@ -38,7 +39,7 @@ struct LaunchQuizView: View {
                     icon: { Image(systemName: Self.categoryIconName) }
                 )
 
-                Picker(Self.categoryLabelText, selection: $selectedCategory) {
+                Picker(Self.categoryLabelText, selection: $category) {
                     ForEach(QuizCategory.allCases, id: \.self) {
                         Text($0.title)
                     }
@@ -47,14 +48,27 @@ struct LaunchQuizView: View {
                 Spacer()
 
                 RoundedButton(title: "Next") {
-                    AppStorage.selectedCategory = selectedCategory
-                    AppStorage.selectedLevel = selectedLevel
+                    quizManager.selectedCategory = category
+                    quizManager.selectedLevel = level
                     appManager.routes.append(.question)
                 }
                 .padding(.bottom, Constants.Spaces.largeSpace)
             }
             .padding(.horizontal, Constants.Spaces.mediumSpace)
             .navigationTitle("Quiz App")
+            .toolbar {
+                // Menu on the Left
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button("Quiz Stories") {
+                            appManager.routes.append(.result)
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                            .imageScale(.large)
+                    }
+                }
+            }
         }
         .ignoresSafeArea()
         .navigationBarTitle("")

@@ -16,13 +16,7 @@ extension Resolver: ResolverRegistering {
         register(QuizService.self) { QuizServiceImpl() }
     }
 
-    func registerManagers() {
-        register(ScoreManager.self) { ScoreManagerImpl() }
-        register(QuizManager.self) { QuizManagerImpl() }
-    }
-
     public static func registerAllServices() {
         Resolver.main.registerServices()
-        Resolver.main.registerManagers()
     }
 }

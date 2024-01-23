@@ -23,13 +23,13 @@ struct ScoreCollectorView: View {
                 .scaleEffect(1)
         }
         .onAppear {
-            self.cancellable = viewModel.scoreManager.overviewSubject
+            self.cancellable = ScoreManager.shared.overviewSubject
                 .receive(on: DispatchQueue.main)
-                .retry(2)
-                .sink { challenge, answer in
-
-                    totalSuccess += challenge.isTrue(answer) ? 1 : 0
-
+                //.retry(2)
+                .sink { challengeModel in
+                    if let answer = challengeModel.answer {
+                        totalSuccess += challengeModel.challengeEntry.isTrue(answer) ? 1 : 0
+                    }
                     totalAnswer += 1
                 }
         }

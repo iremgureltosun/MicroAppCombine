@@ -6,13 +6,26 @@
 //
 
 import Foundation
+import Quiz
 
 final class ResultsViewModel: ObservableObject {
-    @Published public var answers: [String: Bool]
-    @Published public var totalQuestion: Int
+    @Published var stories = AppStorage.quizStories
+    var sortedStories: [QuizStory] {
+        stories.sorted(by: { $0.challengeDate < $1.challengeDate })
+    }
+}
 
-    init() {
-        answers = [:]
-        totalQuestion = 0
+extension ChallengeEntry {
+    var allAnswers: [String] {
+        var list = incorrectAnswers
+        list.append(correctAnswer)
+        return list.shuffled()
+    }
+}
+
+extension QuizStory {
+    var totalScore: Double {
+        let correctAnswerCount = challengeList.filter { $0.answer == $0.challengeEntry.correctAnswer }.count
+        return Double(correctAnswerCount)
     }
 }
