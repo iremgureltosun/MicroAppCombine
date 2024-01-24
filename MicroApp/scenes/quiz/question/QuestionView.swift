@@ -29,22 +29,18 @@ struct QuestionView: View {
 
                     RoundedButton(title: "Skip") {
                         viewModel.skipQuestion(for: presentedChallenge)
-                        viewModel.goToNextQuestion()
                     }
                 } else {
                     ActivityIndicator(isAnimating: true)
-                }
-            }
-            .onChange(of: viewModel.navigateToResults) { _, newValue in
-                if newValue {
-                    viewModel.navigateToResultsView()
                 }
             }
             .padding(.top, Constants.Spaces.largeSpace)
             .padding(.horizontal, Constants.Spaces.mediumSpace)
             .onAppear{
                 Task{
-                    try QuizManager.shared.getAllQuestions().sink { _ in
+                    try QuizManager.shared.getAllQuestions()
+                        .receive(on: DispatchQueue.main)
+                        .sink { _ in
                         print("error")
                     } receiveValue: { response in
                         viewModel.questions = response.results ?? []
@@ -88,7 +84,6 @@ struct QuestionView: View {
             .onTapGesture {
                 withAnimation {
                     try? ScoreManager.shared.onAnswered(result: ChallengeModel(challengeEntry: result, answer: answer))
-                    viewModel.goToNextQuestion()
                 }
             }
     }

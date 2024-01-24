@@ -12,18 +12,12 @@ import Resolver
 
 @MainActor
 final class QuestionViewModel: ObservableObject {
-    @Published public var observedQuestion: Int = 0
-    @Published public var selections: [String] = []
-    @Published public var navigateToResults = false
     @Published var presentedChallenge: ChallengeEntry?
+    @Published var index = 0
     var questions: [ChallengeEntry] = []
     var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
 
     init() {}
-
-    func goToNextQuestion() {
-        observedQuestion += 1
-    }
 
     func collectAnswers() {
         ScoreManager.shared.overviewSubject
@@ -39,16 +33,12 @@ final class QuestionViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func navigateToResultsView() {
-        ApplicationManager.shared.routes.append(.result)
-    }
-
     func skipQuestion(for presentedChallenge: ChallengeEntry) {
         try? ScoreManager.shared.onAnswered(result: ChallengeModel(challengeEntry: presentedChallenge, answer: nil))
     }
 
     func getQuestion() {
-        $observedQuestion
+        ScoreManager.shared.overviewSubject
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
@@ -57,8 +47,9 @@ final class QuestionViewModel: ObservableObject {
                 case let .failure(error):
                     print("Received error on fetch \(error)")
                 }
-            } receiveValue: { index in
-                self.presentedChallenge = self.getQuestion(at: index)
+            } receiveValue: { _ in
+                    self.index += 1
+                    self.presentedChallenge = self.getQuestion(at: self.index)
             }
             .store(in: &cancellables)
     }
