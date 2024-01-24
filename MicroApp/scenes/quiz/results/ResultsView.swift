@@ -5,7 +5,6 @@
 //  Created by Tosun, Irem on 5.06.2023.
 //
 
-import Combine
 import SwiftUI
 
 struct ResultsView: View {
