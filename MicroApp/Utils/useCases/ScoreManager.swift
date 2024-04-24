@@ -11,7 +11,7 @@ import Quiz
 
 @MainActor
 final class ScoreManager: ObservableObject {
-    static let shared = ScoreManager() // The singleton instance
+    static let shared = ScoreManager() 
     var overviewSubject = PassthroughSubject<ChallengeModel, Never>()
 
     private init() {

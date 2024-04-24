@@ -11,12 +11,16 @@ import SwiftUI
 struct MicroAppApp: App {
     @StateObject private var appManager = ApplicationManager.shared
     @StateObject private var quizManager = QuizManager.shared
-    
+
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $appManager.routes) {
                 ZStack {
                     TabView {
+                        NasaView()
+                            .tabItem {
+                                Label("Space", systemImage: "airplane")
+                            }
                         LaunchQuizView()
                             .environmentObject(appManager)
                             .environmentObject(quizManager)
@@ -24,14 +28,7 @@ struct MicroAppApp: App {
                                 Label("Quiz", systemImage: "pencil")
                             }
                             .navigationTitle("Test Sheets")
-
-                        NasaView()
-                            .tabItem {
-                                Label("Space", systemImage: "airplane")
-                            }
                     }
-                    
-                   
                 }
                 .navigationDestination(for: Route.self) { route in
                     switch route {

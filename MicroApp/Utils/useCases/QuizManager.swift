@@ -12,7 +12,7 @@ import Resolver
 
 @MainActor
 final class QuizManager: ObservableObject {
-    static let shared = QuizManager() // The singleton instance
+    static let shared = QuizManager() 
     @Injected var quizService: QuizService
     @Published var response: QuizResponse?
     let totalQuestion: Int

@@ -8,7 +8,6 @@
 import Combine
 import Foundation
 import Quiz
-import Resolver
 
 @MainActor
 final class QuestionViewModel: ObservableObject {

@@ -29,3 +29,17 @@ extension QuizStory {
         return Double(correctAnswerCount)
     }
 }
+private extension String {
+    func toDate(dateFormat: String = "yyyy-MM-dd") -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = dateFormat
+        return dateFormatter.date(from: self)
+    }
+}
+extension Date {
+    func toString(dateFormat: String = "yyyy-MM-dd") -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = dateFormat
+        return dateFormatter.string(from: self)
+    }
+}

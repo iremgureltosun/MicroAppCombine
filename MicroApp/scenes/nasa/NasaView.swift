@@ -15,41 +15,67 @@ struct NasaView: View {
     }
 
     var body: some View {
-        ZStack {
-            VStack {
+        VStack(spacing: Constants.Spaces.mediumSpace) {
+            ScrollView {
+                Text("Astronomy Pic of the Day").font(.title)
+
+                sectionApod
+
+                Text("Asteroids").font(.title)
+
                 sectionAsteroid
             }
-        }.ignoresSafeArea()
+            .presentationDragIndicator(.hidden)
+        }
+        .padding(.horizontal, Constants.Spaces.mediumSpace)
+        .onAppear(perform: {
+            Task {
+                await viewModel.fetchAsteroids()
+                await viewModel.fetchApod()
+            }
+        })
     }
-    
+
     @ViewBuilder
     private var sectionAsteroid: some View {
-        VStack(alignment: .leading) {
-            if let nearEarthObjects = viewModel.asteroidResponse?.nearEarthObjects {
+        if let nearEarthObjects = viewModel.asteroidResponse?.nearEarthObjects {
+            VStack(alignment: .leading) {
                 ForEach(nearEarthObjects.sorted(by: { $0.key < $1.key }), id: \.key) { date, nearEarthObjectArray in
-                    // 'date' is the key (String) of the dictionary
-                    // 'nearEarthObjectArray' is the array of NearEarthObject values
+                    DisclosureGroup {
+                        Divider()
+                        ForEach(nearEarthObjectArray, id: \.id) { nearEarthObject in
+                            HStack {
+                                Text(nearEarthObject.name)
+                                Spacer()
+                                if nearEarthObject.isPotentiallyHazardousAsteroid {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                }
+                            }
 
-                    Text("Date: \(date)").font(.headline)
-
-                    ForEach(nearEarthObjectArray, id: \.id) { nearEarthObject in
-                        // Access individual NearEarthObject within the array
-                        Text("ID: \(nearEarthObject.id), Name: \(nearEarthObject.name), Potentially Hazardous: \(nearEarthObject.isPotentiallyHazardousAsteroid.description)")
-                        // Add more properties as needed
+                            Divider()
+                        }
+                    } label: {
+                        HStack {
+                            Text("\(date)").font(.headline)
+                        }
                     }
-
-                    Divider() // Separate entries for better readability
                 }
             }
         }
     }
-}
 
-extension String {
-    func toDate(dateFormat: String = "yyyy-MM-dd") -> Date? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = dateFormat
-        return dateFormatter.date(from: self)
+    @ViewBuilder
+    private var sectionApod: some View {
+        if let pic = viewModel.apodResponse {
+            VStack(alignment: .leading) {
+                RemoteImageView(url: pic.url, contentMode: .fill)
+
+                Text(pic.date)
+                    .font(.caption2)
+                Text(pic.explanation)
+                    .font(.caption)
+            }
+        }
     }
 }
 
